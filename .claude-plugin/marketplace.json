@@ -1,0 +1,15 @@
+{
+  "name": "github-vibe-flow",
+  "description": "GitHub Issue-driven collaboration between Coding Agents and humans",
+  "owner": {
+    "name": "ensekitt"
+  },
+  "plugins": [
+    {
+      "name": "github-vibe-flow",
+      "description": "GitHub Issue-driven collaboration between Coding Agents and humans: design, issue creation, parallel execution, self-review, monitoring, and cleanup",
+      "version": "0.1.0",
+      "source": "./"
+    }
+  ]
+}
