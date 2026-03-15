@@ -13,6 +13,43 @@ Clean up all resources created during a vibe-flow cycle and sync the local envir
 
 ## The Process
 
+### 0. Merge Request
+
+Before cleanup, check for open vibe-flow PRs that need merging.
+
+```bash
+# List open PRs with vibe-flow label
+gh pr list --label vibe-flow --state open --json number,title,headRefName
+```
+
+**If no open PRs:** Skip to Step 1.
+
+**If open PRs exist:**
+
+For each open PR, ask the human for approval individually:
+
+```
+Open vibe-flow PRs found:
+
+PR #15: Add auth endpoint (branch: vf/12-add-auth)
+  → Merge this PR? [Yes / No / Skip]
+```
+
+For each approved PR, merge via gh CLI:
+
+```bash
+gh pr merge <number> --merge --delete-branch
+```
+
+- `--merge`: merge commit strategy
+- `--delete-branch`: automatically delete the remote branch after merge
+
+After all approved PRs are merged (or skipped), proceed to Step 1.
+
+**Error handling:**
+- If merge fails due to conflicts, report the conflict and ask the human to resolve manually
+- If merge fails due to required checks, report the status and suggest waiting
+
 ### 1. Identify Cleanup Targets
 
 Find all merged vibe-flow PRs and their associated resources:
@@ -76,9 +113,9 @@ git worktree remove "${REPO_ROOT}/.worktrees/vf/13-add-api" --force
 git branch -d vf/12-add-auth
 git branch -d vf/13-add-api
 
-# Delete remote branches
-git push origin --delete vf/12-add-auth
-git push origin --delete vf/13-add-api
+# Delete remote branches (skip if already deleted by --delete-branch in Step 0)
+git push origin --delete vf/12-add-auth 2>/dev/null || true
+git push origin --delete vf/13-add-api 2>/dev/null || true
 
 # Handle design documents (based on user choice)
 # Option 1: Delete
