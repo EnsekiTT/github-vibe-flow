@@ -1,0 +1,11 @@
+# Worktrees (created by vf-execute)
+.worktrees/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
