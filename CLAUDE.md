@@ -27,7 +27,7 @@ GitHub Issue駆動でCoding Agentと人間が協働するためのClaude Code Pl
 
 6つのスキルがE2Eフローを構成する:
 
-1. `vf-design` → brainstormingで設計ドキュメント作成
+1. `vf-design` → 対話的設計セッションで設計ドキュメント作成
 2. `vf-issue-create` → 設計からGitHub Issue生成（MCP経由）
 3. `vf-execute` → tmux + git worktreeで複数Agent並列実行
 4. `vf-monitor` → PRコメントをポーリングし自動レビュー対応
@@ -44,7 +44,11 @@ Issue実行順序を `[]`（シリアル）と `()`（パラレル）で定義:
 - GitHub MCP Server（Issue・PR操作）
 - tmux（複数Agent実行環境）
 - git worktree（Agent作業領域の隔離）
-- superpowers plugin（brainstorming等の既存スキル）
+## スキル間連携の規約
+
+- スキルから他のスキルを Skill ツールで呼び出すことは**禁止**（Claude Code の制約）
+- 同一プラグイン内のスキルを参照する場合: `skills/<name>/SKILL.md` を Read ツールで読み込み、指示に従う
+- 外部プラグインのスキルに依存する場合: 必要なロジックを自スキルにインライン化する
 
 ## スキルファイルの規約
 
