@@ -44,6 +44,7 @@ Issue実行順序を `[]`（シリアル）と `()`（パラレル）で定義:
 - GitHub MCP Server（Issue・PR操作）
 - tmux（複数Agent実行環境）
 - git worktree（Agent作業領域の隔離）
+
 ## スキル間連携の規約
 
 - スキルから他のスキルを Skill ツールで呼び出すことは**禁止**（Claude Code の制約）
@@ -53,5 +54,5 @@ Issue実行順序を `[]`（シリアル）と `()`（パラレル）で定義:
 ## スキルファイルの規約
 
 - フロントマター: `name`（kebab-case）と `description`（英語、トリガー条件を記述）が必須
-- 本文構成: Overview → The Process → Integration の順
+- 本文構成: Overview → プロセス → Integration の順
 - コマンドファイル: `disable-model-invocation: true` を必ず付与し、対応するスキルを呼び出す1行のみ
