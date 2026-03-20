@@ -71,6 +71,13 @@ git rev-parse --show-toplevel
 
 各スキルは独立しており、単体で呼び出し可能。
 
+## 短縮フロー（既存Issue活用）
+
+すでにGitHub Issueが作成済みの場合、設計・Issue作成（Step 1-2）をスキップして `/vf-plan` から開始できる。
+`vf-plan` は既存Issueから対話的に実行対象を選定し、実行順序を決定して `vf-execute` に繋げる独立したエントリーポイント。
+
+短縮フローの流れ: `vf-plan → vf-execute → vf-monitor → vf-merge`
+
 ## Integration
 
 **Reads (in order):**
