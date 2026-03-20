@@ -83,3 +83,6 @@ GitHub MCP Serverを使ってIssueを取得し、一覧表示する：
 
 **Calls:**
 - GitHub MCP Server — Issue取得・詳細読み込み
+
+**Hands off to:**
+- vf-execute — 実行記法を渡して実行を開始
