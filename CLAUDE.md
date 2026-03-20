@@ -23,6 +23,15 @@ GitHub Issue駆動でCoding Agentと人間が協働するためのClaude Code Pl
 - `commands/<command-name>.md` — slash commandラッパー（`disable-model-invocation: true` で対応するスキルを呼び出すだけ）
 - `docs/plans/` — 設計ドキュメントと実装計画
 
+### docs/plans/ の命名規約
+
+ファイル名は `YYYY-MM-DD-<topic>-<suffix>.md` の形式に従う。
+
+| サフィックス | 生成元スキル | 用途 |
+|---|---|---|
+| `-design.md` | `vf-design` | 対話的設計セッションの成果物。要件・設計判断・Issue分割を含む |
+| `-plan.md` | `vf-plan` | 既存Issueから選定した実行計画。実行記法と優先順位を含む |
+
 ## スキル構成
 
 7つのスキルが2つのフローを構成する:
