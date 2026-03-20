@@ -7,65 +7,65 @@ description: "Use to run the full vibe-flow cycle end-to-end: design → issue c
 
 ## Overview
 
-Orchestrate the complete vibe-flow cycle from design through cleanup. This is a convenience skill that chains all other vf-* skills in sequence.
+vibe-flow サイクル全体を設計からクリーンアップまで統括する。
 
-**Announce at start:** "I'm using the vf-flow skill to run the full vibe-flow cycle."
+**開始時の宣言:** 「vf-flow スキルを使って、vibe-flow サイクル全体を実行します。」
 
-## The Process
+## プロセス
 
-### Step 1: Design
+### Step 1: 設計
 
-Invoke github-vibe-flow:vf-design with the user's input.
+`skills/vf-design/SKILL.md` を Read ツールで読み込み、その指示に従って設計セッションを実行する。
 
-Wait for design completion. The design document path is passed to the next step.
+設計が完了したら、設計ドキュメントのパスを次のステップに引き継ぐ。
 
-### Step 2: Issue Creation
+### Step 2: Issue 作成
 
-Invoke github-vibe-flow:vf-issue-create with the design document path.
+`skills/vf-issue-create/SKILL.md` を Read ツールで読み込み、設計ドキュメントのパスを入力として実行する。
 
-Wait for human confirmation of the execution notation.
+人間による実行記法の確認を待つ。
 
-### Step 3: Execution
+### Step 3: 実行
 
-Invoke github-vibe-flow:vf-execute with the confirmed execution notation.
+`skills/vf-execute/SKILL.md` を Read ツールで読み込み、確認済みの実行記法を入力として実行する。
 
-Wait for all agents to complete their work (PRs created, self-reviewed, marked ready).
+すべてのAgentが作業を完了するまで待つ（PR作成・セルフレビュー・Ready状態）。
 
-### Step 4: Monitoring
+### Step 4: モニタリング
 
-Invoke github-vibe-flow:vf-monitor to watch for human review comments.
+`skills/vf-monitor/SKILL.md` を Read ツールで読み込み、PRの監視を開始する。
 
-The monitor runs until all PRs are merged or closed.
+すべてのPRがマージまたはクローズされるまで継続する。
 
-### Step 5: Cleanup
+### Step 5: クリーンアップ
 
-When all PRs are merged, invoke github-vibe-flow:vf-merge.
+すべてのPRがマージされたら、`skills/vf-merge/SKILL.md` を Read ツールで読み込み、クリーンアップを実行する。
 
-Wait for human confirmation before executing cleanup.
+人間による確認を待ってから実行する。
 
-## Human Checkpoints
+## ヒューマンチェックポイント
 
-| After Step | Human Action |
+| ステップ後 | 人間のアクション |
 |---|---|
-| 1. Design | Validated during brainstorming |
-| 2. Issue Creation | Confirm execution notation |
-| 3. Execution | Review PRs when marked ready |
-| 4. Monitoring | Approve PRs |
-| 5. Cleanup | Confirm cleanup targets |
+| 1. 設計 | 設計セッション中に対話的に承認 |
+| 2. Issue 作成 | 実行記法を確認 |
+| 3. 実行 | PRがReady状態になったらレビュー |
+| 4. モニタリング | PRを承認 |
+| 5. クリーンアップ | クリーンアップ対象を確認 |
 
-## Resumability
+## 再開方法
 
-If the flow is interrupted at any point, the user can:
-- Resume from the current step using the individual skill
-- Re-run `/vf-flow` (will need to re-specify the starting point)
+フローが中断された場合:
+- 個別のスキルを使って現在のステップから再開できる
+- `/vf-flow` を再実行する場合は、開始ポイントを再指定する必要がある
 
-Each skill is independent and can be invoked standalone.
+各スキルは独立しており、単体で呼び出し可能。
 
 ## Integration
 
-**Calls (in order):**
-1. github-vibe-flow:vf-design
-2. github-vibe-flow:vf-issue-create
-3. github-vibe-flow:vf-execute
-4. github-vibe-flow:vf-monitor
-5. github-vibe-flow:vf-merge
+**Reads (in order):**
+1. skills/vf-design/SKILL.md
+2. skills/vf-issue-create/SKILL.md
+3. skills/vf-execute/SKILL.md
+4. skills/vf-monitor/SKILL.md
+5. skills/vf-merge/SKILL.md

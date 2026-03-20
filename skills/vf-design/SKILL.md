@@ -1,58 +1,73 @@
 ---
 name: vf-design
-description: "Use to start a new feature design. Wraps superpowers:brainstorming with vibe-flow extensions (issue breakdown, execution notation, acceptance criteria)."
+description: "Use to start a new feature design. Explores ideas through collaborative dialogue, then extends with issue breakdown, execution notation, and acceptance criteria."
 ---
 
 # Vibe Flow Design
 
 ## Overview
 
-Start a collaborative design session to turn an idea into an actionable plan with GitHub Issues.
+アイデアを対話的に探求し、GitHub Issueとして実行可能な設計ドキュメントに仕上げる。
 
-Wraps superpowers:brainstorming and extends the output with issue breakdown, execution notation, and acceptance criteria.
+**開始時の宣言:** 「vf-design スキルを使って、設計セッションを開始します。」
 
-**Announce at start:** "I'm using the vf-design skill to start a collaborative design session."
+## プロセス
 
-## The Process
+### 1. アイデアの理解
 
-### 1. Invoke Brainstorming
+- まずプロジェクトの現状を確認する（ファイル、ドキュメント、最近のコミット）
+- 質問は**1回に1つだけ**投げる
+- 可能な限り**選択肢形式**で質問する（自由回答でもOK）
+- 1つのトピックに深掘りが必要な場合は、複数の質問に分ける
+- 目的・制約・成功基準を把握することに集中する
 
-Use superpowers:brainstorming to explore the idea and create a design document.
+### 2. アプローチの探求
 
-Follow all brainstorming guidelines: one question at a time, multiple choice preferred, incremental validation.
+- 2〜3のアプローチを**トレードオフ付き**で提案する
+- 推奨案を先に示し、その理由を説明する
+- 会話的に選択肢を提示する
 
-### 2. Extend the Design
+### 3. 設計の提示
 
-After the design is validated, add these sections to the design document:
+- 理解が十分だと判断したら、設計を提示する
+- **200〜300語ごとのセクション**に分けて段階的に提示する
+- 各セクションの後に「ここまで問題ないですか？」と確認する
+- カバーする内容：アーキテクチャ、コンポーネント、データフロー、エラー処理、テスト
+- YAGNIを徹底する — 不要な機能は含めない
+- 不明点があれば前のステップに戻って確認する
 
-**Issue Breakdown:**
+### 4. 設計の拡張
 
-Break the design into implementable units. Each issue should be:
-- A single, well-scoped unit of work
-- Independently testable
-- Clear about what "done" looks like
+設計が承認されたら、以下のセクションを追加する:
 
-Format:
+**Issue 分解:**
+
+設計を実装可能な単位に分解する。各Issueは:
+- 単一の、スコープが明確な作業単位
+- 独立してテスト可能
+- 「完了」の定義が明確
+
+フォーマット:
 
 ```
 ## Issue Breakdown
 
-### Issue 1: [Title]
-**Description:** [What to implement]
-**Acceptance Criteria:**
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+### Issue 1: [タイトル]
+**説明:** [実装内容]
+**受入基準:**
+- [ ] [基準1]
+- [ ] [基準2]
 
-### Issue 2: [Title]
+### Issue 2: [タイトル]
 ...
 ```
 
-**Execution Notation:**
+**実行記法:**
 
-Define the execution order using list/set notation:
-- `[]` = serial (sequential execution)
-- `()` = parallel (concurrent execution)
-- Numbers are temporary IDs (replaced with GitHub Issue numbers by `/vf-issue-create`)
+リスト/セット記法で実行順序を定義する:
+- `[]` = シリアル（順次実行）
+- `()` = パラレル（並列実行）
+- 番号は仮ID（`/vf-issue-create` で GitHub Issue 番号に置換される）
 
 ```
 ## Execution Order
@@ -60,19 +75,16 @@ Define the execution order using list/set notation:
 `[1, (2, 3), 4]`
 ```
 
-### 3. Save the Design
+### 5. 保存
 
-Save to `docs/plans/YYYY-MM-DD-<topic>-design.md` and commit.
+`docs/plans/YYYY-MM-DD-<topic>-design.md` に保存し、コミットする。
 
-### 4. Handoff
+### 6. ハンドオフ
 
-- If invoked from `/vf-flow`: automatically proceed to `/vf-issue-create` with the design document path
-- If invoked standalone: report the saved path and suggest running `/vf-issue-create <path>`
+- `/vf-flow` から呼び出された場合: 設計ドキュメントのパスを返し、次のステップに進む
+- 単体で呼び出された場合: 保存パスを報告し、`/vf-issue-create <パス>` の実行を提案する
 
 ## Integration
 
-**Calls:**
-- superpowers:brainstorming — core design process
-
 **Called by:**
-- vf-flow — as the first step in the E2E flow
+- vf-flow — E2Eフローの最初のステップとして
