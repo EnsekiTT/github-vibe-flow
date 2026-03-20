@@ -25,14 +25,18 @@ GitHub Issue駆動でCoding Agentと人間が協働するためのClaude Code Pl
 
 ## スキル構成
 
-6つのスキルがE2Eフローを構成する:
+7つのスキルが2つのフローを構成する:
 
+**E2Eフロー（vf-flow）:**
 1. `vf-design` → 対話的設計セッションで設計ドキュメント作成
 2. `vf-issue-create` → 設計からGitHub Issue生成（MCP経由）
 3. `vf-execute` → tmux + git worktreeで複数Agent並列実行
 4. `vf-monitor` → PRコメントをポーリングし自動レビュー対応
 5. `vf-merge` → worktree/ブランチ/設計ドキュメントのクリーンアップ
 6. `vf-flow` → 上記1-5を統括するメタフロー
+
+**短縮フロー（既存Issue活用）:**
+7. `vf-plan` → 既存Issueから対話的に実行対象を選定し実行順序を決定（→ vf-execute へ）
 
 ## 実行記法
 
