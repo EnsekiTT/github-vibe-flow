@@ -57,12 +57,11 @@ INTERVAL=${1:-30}  # 秒
      fi
      ```
    - `./review-responder-prompt.md` テンプレートからプロンプトを構築する
-   - 新しいtmuxペインでClaude Codeを起動する:
+   - 新しいtmuxウィンドウでClaude Codeを起動する:
      ```bash
-     tmux split-window -t vibe-flow -h
-     tmux send-keys -t vibe-flow "cd ${WORKTREE_PATH} && claude --print --dangerously-skip-permissions -p 'RESPONDER_PROMPT'" Enter
-     tmux select-pane -T "vf-review-${PR_NUMBER}"
+     tmux new-window -n "vf-review-${PR_NUMBER}" "cd ${WORKTREE_PATH} && claude --dangerously-skip-permissions -p 'RESPONDER_PROMPT'"
      ```
+     **注意:** `--print` は使用しない。TUIのリアルタイム表示でユーザーが進捗を確認できるようにする。
    - このPRの最終確認タイムスタンプを更新する
 
 4. **終了条件の確認:**

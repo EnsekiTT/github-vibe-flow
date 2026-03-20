@@ -70,21 +70,19 @@ BRANCH_NAME="vf/${ISSUE_NUM}-${ISSUE_TITLE_SLUG}"
 # worktreeを作成
 git worktree add "${REPO_ROOT}/.worktrees/${BRANCH_NAME}" -b "${BRANCH_NAME}"
 
-# 新しいtmuxペインでClaude Codeを起動
-tmux split-window -t vibe-flow -h
-tmux send-keys -t vibe-flow "cd ${REPO_ROOT}/.worktrees/${BRANCH_NAME} && claude --print --dangerously-skip-permissions -p 'AGENT_PROMPT_HERE'" Enter
-
-# 識別用にペイン名を設定
-tmux select-pane -T "vf-${ISSUE_NUM}"
+# 新しいtmuxウィンドウでClaude Codeを起動（ペインではなくウィンドウを使い、各Agentの進捗を個別に確認可能にする）
+tmux new-window -n "vf-${ISSUE_NUM}" "cd ${REPO_ROOT}/.worktrees/${BRANCH_NAME} && claude --dangerously-skip-permissions -p 'AGENT_PROMPT_HERE'"
 ```
+
+**注意:** `--print` は使用しない。`--print` は全出力をバッファして完了時に一括表示するため、実行中の進捗が見えなくなる。`--print` なしであればTUIがリアルタイムで表示され、ユーザーが `tmux select-window` で各Agentの進捗を確認できる。
 
 ### 6. 進捗のモニタリング
 
-tmuxペインのアクティビティで各Agentのステータスを追跡する:
+各Agentのウィンドウが残っているかで完了を検知する:
 
 ```bash
-# ペインのプロセスが実行中か確認
-tmux list-panes -t vibe-flow -F '#{pane_title} #{pane_pid} #{pane_current_command}'
+# 各Agentウィンドウの生存確認（ウィンドウが閉じれば完了）
+tmux list-windows -F '#{window_name} #{window_active}'
 ```
 
 シリアルステップの完了（またはパラレルグループの全項目完了）を検知したら、次のステップに進む。

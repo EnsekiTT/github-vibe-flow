@@ -5,7 +5,7 @@
 プレースホルダー（ISSUE_NUMBER, ISSUE_TITLE, ISSUE_BODY, ACCEPTANCE_CRITERIA, WORKTREE_PATH, BRANCH_NAME）を実際の値に置換すること。
 
 ```
-claude --print --dangerously-skip-permissions -p "
+claude --dangerously-skip-permissions -p "
 You are working on GitHub Issue ISSUE_NUMBER: ISSUE_TITLE
 
 ## Issue の説明
