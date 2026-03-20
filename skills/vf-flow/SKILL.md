@@ -5,7 +5,7 @@ description: "Use to run the full vibe-flow cycle end-to-end: design → issue c
 
 # Vibe Flow (End-to-End)
 
-## Overview
+## 概要
 
 vibe-flow サイクル全体を設計からクリーンアップまで統括する。
 

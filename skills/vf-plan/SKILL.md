@@ -5,7 +5,7 @@ description: "Use to select and prioritize existing GitHub Issues for execution.
 
 # Vibe Flow Plan
 
-## Overview
+## 概要
 
 リポジトリの既存GitHub Issueから対話的に実行対象を選定し、実行順序を決めて vf-execute に繋げる。vf-design を経由しない「既存Issue活用」の独立したエントリーポイント。
 

@@ -5,7 +5,7 @@ description: "Use to start a new feature design. Explores ideas through collabor
 
 # Vibe Flow Design
 
-## Overview
+## 概要
 
 アイデアを対話的に探求し、GitHub Issueとして実行可能な設計ドキュメントに仕上げる。
 
