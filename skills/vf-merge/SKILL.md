@@ -3,162 +3,162 @@ name: vf-merge
 description: "Use after PRs are merged to clean up worktrees, branches, design documents, and sync local environment to the latest default branch."
 ---
 
-# Vibe Flow Merge (Cleanup)
+# Vibe Flow Merge（クリーンアップ）
 
-## Overview
+## 概要
 
-Clean up all resources created during a vibe-flow cycle and sync the local environment to the latest default branch state.
+vibe-flowサイクルで作成された全リソースをクリーンアップし、ローカル環境をデフォルトブランチの最新状態に同期する。
 
-**Announce at start:** "I'm using the vf-merge skill to clean up after the completed flow."
+**開始時の宣言:** 「vf-merge スキルを使って、完了したフローのクリーンアップを実行します。」
 
-## The Process
+## プロセス
 
-### 0. Merge Request
+### 0. マージ依頼
 
-Before cleanup, check for open vibe-flow PRs that need merging.
+クリーンアップの前に、マージが必要なオープンPRを確認する。
 
 ```bash
-# List open PRs with vibe-flow label
+# vibe-flowラベル付きのオープンPRを一覧表示
 gh pr list --label vibe-flow --state open --json number,title,headRefName
 ```
 
-**If no open PRs:** Skip to Step 1.
+**オープンPRなし:** ステップ1に進む。
 
-**If open PRs exist:**
+**オープンPRあり:**
 
-For each open PR, ask the human for approval individually:
+各オープンPRについて、人間に個別に承認を確認する:
 
 ```
-Open vibe-flow PRs found:
+オープンなvibe-flow PR:
 
-PR #15: Add auth endpoint (branch: vf/12-add-auth)
-  → Merge this PR? [Yes / No / Skip]
+PR #15: Add auth endpoint (ブランチ: vf/12-add-auth)
+  → このPRをマージしますか？ [はい / いいえ / スキップ]
 ```
 
-For each approved PR, merge via gh CLI:
+承認されたPRごとに、gh CLIでマージする:
 
 ```bash
 gh pr merge <number> --merge --delete-branch
 ```
 
-- `--merge`: merge commit strategy
-- `--delete-branch`: automatically delete the remote branch after merge
+- `--merge`: マージコミット戦略
+- `--delete-branch`: マージ後にリモートブランチを自動削除
 
-After all approved PRs are merged (or skipped), proceed to Step 1.
+全承認済みPRのマージ（またはスキップ）完了後、ステップ1に進む。
 
-**Error handling:**
-- If merge fails due to conflicts, report the conflict and ask the human to resolve manually
-- If merge fails due to required checks, report the status and suggest waiting
+**エラーハンドリング:**
+- コンフリクトによるマージ失敗: コンフリクトを報告し、人間に手動解決を依頼
+- 必須チェック未通過によるマージ失敗: ステータスを報告し、待機を提案
 
-### 1. Identify Cleanup Targets
+### 1. クリーンアップ対象の特定
 
-Find all merged vibe-flow PRs and their associated resources:
+マージ済みのvibe-flow PRと関連リソースを検索する:
 
 ```bash
-# List merged PRs with vibe-flow label
+# vibe-flowラベル付きのマージ済みPRを一覧表示
 gh pr list --label vibe-flow --state merged --json number,title,headRefName
 ```
 
-For each merged PR, identify:
-- Worktree path: `.worktrees/vf/<issue>-<slug>`
-- Local branch: `vf/<issue>-<slug>`
-- Remote branch: `origin/vf/<issue>-<slug>`
+各マージ済みPRについて、以下を特定する:
+- worktreeパス: `.worktrees/vf/<issue>-<slug>`
+- ローカルブランチ: `vf/<issue>-<slug>`
+- リモートブランチ: `origin/vf/<issue>-<slug>`
 
-Also find:
-- Design documents in `docs/plans/` referenced by the PRs
-- Any remaining tmux panes named `vf-*`
+また、以下も検索する:
+- PRに参照されている `docs/plans/` 内の設計ドキュメント
+- `vf-*` という名前の残存tmuxペイン
 
-### 2. Present Cleanup Plan
+### 2. クリーンアップ計画の提示
 
-Display the full list of resources to be cleaned up:
+クリーンアップ対象リソースの全リストを表示する:
 
 ```
-Cleanup targets:
+クリーンアップ対象:
 
-Worktrees:
-  - .worktrees/vf/12-add-auth (merged PR #15)
-  - .worktrees/vf/13-add-api (merged PR #16)
+worktree:
+  - .worktrees/vf/12-add-auth（マージ済みPR #15）
+  - .worktrees/vf/13-add-api（マージ済みPR #16）
 
-Branches (local + remote):
+ブランチ（ローカル＋リモート）:
   - vf/12-add-auth
   - vf/13-add-api
 
-Design documents:
+設計ドキュメント:
   - docs/plans/2026-03-15-auth-design.md
 
-tmux panes:
+tmuxペイン:
   - vf-12, vf-13, vf-monitor
 
-Options for design documents:
-  1. Delete
-  2. Move to docs/plans/archive/
+設計ドキュメントの処理:
+  1. 削除
+  2. docs/plans/archive/ に移動
 
-Proceed with cleanup?
+クリーンアップを実行しますか？
 ```
 
-Wait for human confirmation.
+人間の確認を待つ。
 
-### 3. Execute Cleanup
+### 3. クリーンアップの実行
 
-After confirmation:
+確認後:
 
 ```bash
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
-# Remove worktrees
+# worktreeの削除
 git worktree remove "${REPO_ROOT}/.worktrees/vf/12-add-auth" --force
 git worktree remove "${REPO_ROOT}/.worktrees/vf/13-add-api" --force
 
-# Delete local branches
+# ローカルブランチの削除
 git branch -d vf/12-add-auth
 git branch -d vf/13-add-api
 
-# Delete remote branches (skip if already deleted by --delete-branch in Step 0)
+# リモートブランチの削除（ステップ0の--delete-branchで削除済みの場合はスキップ）
 git push origin --delete vf/12-add-auth 2>/dev/null || true
 git push origin --delete vf/13-add-api 2>/dev/null || true
 
-# Handle design documents (based on user choice)
-# Option 1: Delete
+# 設計ドキュメントの処理（ユーザーの選択に基づく）
+# 選択肢1: 削除
 rm docs/plans/2026-03-15-auth-design.md
 
-# Option 2: Archive
+# 選択肢2: アーカイブ
 mkdir -p docs/plans/archive
 mv docs/plans/2026-03-15-auth-design.md docs/plans/archive/
 
-# Close tmux panes
+# tmuxペインの終了
 tmux kill-pane -t vf-12 2>/dev/null
 tmux kill-pane -t vf-13 2>/dev/null
 tmux kill-pane -t vf-monitor 2>/dev/null
 ```
 
-### 4. Sync Local Environment
+### 4. ローカル環境の同期
 
 ```bash
-# Detect default branch
+# デフォルトブランチの検出
 DEFAULT_BRANCH=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
 
-# Switch to default branch and pull latest
+# デフォルトブランチに切り替えて最新を取得
 git checkout "${DEFAULT_BRANCH}"
 git pull origin "${DEFAULT_BRANCH}"
 ```
 
-### 5. Report Results
+### 5. 結果の報告
 
 ```
-Cleanup complete:
-  - Removed 2 worktrees
-  - Deleted 2 local branches
-  - Deleted 2 remote branches
-  - Archived 1 design document
-  - Closed 3 tmux panes
-  - Synced to main (latest: abc1234)
+クリーンアップ完了:
+  - worktree 2件を削除
+  - ローカルブランチ 2件を削除
+  - リモートブランチ 2件を削除
+  - 設計ドキュメント 1件をアーカイブ
+  - tmuxペイン 3件を終了
+  - mainに同期完了（最新: abc1234）
 ```
 
-## Integration
+## 連携
 
-**Called by:**
-- vf-flow — as the final step, after all PRs are merged
+**呼び出し元:**
+- vf-flow — 全PRマージ後の最終ステップとして
 
-**Pairs with:**
-- vf-execute — cleans up resources created by vf-execute
-- vf-monitor — closes monitor pane
+**関連スキル:**
+- vf-execute — vf-executeが作成したリソースをクリーンアップ
+- vf-monitor — モニターペインを終了

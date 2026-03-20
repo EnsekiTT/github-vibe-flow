@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - コード内のコメント、ドキュメント、コミットメッセージも**日本語**で記述すること
 - SKILL.mdファイル内の説明文やフロー記述も日本語で書くこと
 - ただし、YAML frontmatter の `name` / `description` フィールド、plugin.json、コマンドの技術的識別子は英語のまま維持
+- テンプレート内の見出し（設計ドキュメントやIssue本文のフォーマット等）も**日本語**で記述すること
 
 ## プロジェクト概要
 
@@ -67,5 +68,5 @@ Issue実行順序を `[]`（シリアル）と `()`（パラレル）で定義:
 ## スキルファイルの規約
 
 - フロントマター: `name`（kebab-case）と `description`（英語、トリガー条件を記述）が必須
-- 本文構成: Overview → プロセス → Integration の順
+- 本文構成: 概要 → プロセス → 連携 の順
 - コマンドファイル: `disable-model-invocation: true` を必ず付与し、対応するスキルを呼び出す1行のみ

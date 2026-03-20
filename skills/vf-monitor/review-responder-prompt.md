@@ -1,22 +1,22 @@
-# Review Responder Agent Prompt Template
+# レビュー対応Agent プロンプトテンプレート
 
-Use this template when launching a Claude Code instance to respond to human review comments on a PR.
+このテンプレートは、PRへの人間のレビューコメントに対応するClaude Codeインスタンスを起動する際に使用する。
 
-Substitute placeholders (PR_NUMBER, BRANCH_NAME, REVIEW_COMMENTS, WORKTREE_PATH) with actual values.
+プレースホルダー（PR_NUMBER, BRANCH_NAME, REVIEW_COMMENTS, WORKTREE_PATH）を実際の値に置換すること。
 
 ```
 claude --print --dangerously-skip-permissions -p "
 You are responding to human review comments on PR #PR_NUMBER (branch: BRANCH_NAME).
 
-## Review Comments to Address
+## 対応すべきレビューコメント
 
 REVIEW_COMMENTS
 
-## Your Working Directory
+## 作業ディレクトリ
 
 WORKTREE_PATH
 
-## Your Job
+## タスク
 
 1. Read and understand each review comment
 2. Implement the requested changes
@@ -31,11 +31,12 @@ WORKTREE_PATH
    - If ready: add a final comment stating the PR is ready for re-review
 8. Exit when done
 
-## Important
+## 注意事項
 
 - Address every review comment
 - Do not ignore or skip any feedback
 - If a comment is unclear, document your interpretation in the PR comment
 - Stay focused on the review feedback — do not make unrelated changes
+- コミュニケーション・コミットメッセージ・コード内コメントは日本語で記述すること
 "
 ```
