@@ -5,50 +5,50 @@ description: "Use to monitor PRs for human review comments and automatically dis
 
 # Vibe Flow Monitor
 
-## Overview
+## 概要
 
-Run a persistent polling loop that watches for human review comments on vibe-flow PRs and automatically dispatches agents to respond.
+vibe-flow PRへの人間のレビューコメントを監視し、自動的にAgentをディスパッチして対応する持続的なポーリングループを実行する。
 
-**Announce at start:** "I'm using the vf-monitor skill to start monitoring PRs for review comments."
+**開始時の宣言:** 「vf-monitor スキルを使って、PRのレビューコメント監視を開始します。」
 
-## The Process
+## プロセス
 
-### 1. Setup
+### 1. セットアップ
 
 ```bash
-# Ensure we're in tmux
+# tmux内かどうかを確認
 if [ -z "$TMUX" ]; then
-    echo "ERROR: vf-monitor must run inside tmux"
+    echo "エラー: vf-monitorはtmux内で実行する必要があります"
     exit 1
 fi
 ```
 
-Identify monitoring targets:
-- Find all open PRs with the `vibe-flow` label via GitHub MCP
-- Record the latest comment/review timestamp for each PR (to detect new ones)
+監視対象の特定:
+- GitHub MCP経由で `vibe-flow` ラベル付きのオープンPRをすべて取得
+- 各PRの最新コメント/レビューのタイムスタンプを記録（新着検出用）
 
-### 2. Polling Loop
+### 2. ポーリングループ
 
-Run a loop with configurable interval (default: 30 seconds, override via argument):
+設定可能なインターバル（デフォルト: 30秒、引数で上書き可能）でループを実行する:
 
 ```bash
-INTERVAL=${1:-30}  # seconds
+INTERVAL=${1:-30}  # 秒
 ```
 
-Each iteration:
+各イテレーション:
 
-1. **Fetch PR updates** via GitHub MCP for each monitored PR:
-   - New reviews (especially `changes_requested`)
-   - New review comments
-   - New issue comments
+1. **PR更新の取得** — 監視対象の各PRについてGitHub MCP経由で取得:
+   - 新しいレビュー（特に `changes_requested`）
+   - 新しいレビューコメント
+   - 新しいIssueコメント
 
-2. **Filter out agent comments:**
-   - Ignore comments from the bot/agent user
-   - Only process comments from human users
+2. **Agentコメントのフィルタリング:**
+   - bot/Agentユーザーからのコメントは無視
+   - 人間ユーザーからのコメントのみ処理
 
-3. **On new human comment detected:**
-   - Identify the PR and branch
-   - Check if worktree exists for the branch, create if needed:
+3. **新しい人間のコメントを検出した場合:**
+   - PRとブランチを特定
+   - worktreeの存在を確認し、必要なら作成:
      ```bash
      REPO_ROOT=$(git rev-parse --show-toplevel)
      WORKTREE_PATH="${REPO_ROOT}/.worktrees/${BRANCH_NAME}"
@@ -56,38 +56,38 @@ Each iteration:
          git worktree add "$WORKTREE_PATH" "${BRANCH_NAME}"
      fi
      ```
-   - Build prompt from `./review-responder-prompt.md` template
-   - Launch Claude Code in a new tmux pane:
+   - `./review-responder-prompt.md` テンプレートからプロンプトを構築
+   - 新しいtmuxペインでClaude Codeを起動:
      ```bash
      tmux split-window -t vibe-flow -h
      tmux send-keys -t vibe-flow "cd ${WORKTREE_PATH} && claude --print --dangerously-skip-permissions -p 'RESPONDER_PROMPT'" Enter
      tmux select-pane -T "vf-review-${PR_NUMBER}"
      ```
-   - Update the last-seen timestamp for this PR
+   - このPRの最終確認タイムスタンプを更新
 
-4. **Check termination conditions:**
-   - If all monitored PRs are merged or closed: exit the loop
-   - Log: "All monitored PRs resolved. Stopping monitor."
+4. **終了条件の確認:**
+   - 監視対象の全PRがマージまたはクローズされた場合: ループを終了
+   - ログ出力: 「監視対象の全PRが解決されました。モニターを停止します。」
 
-### 3. Manual Control
+### 3. 手動制御
 
-The monitor can be stopped by:
-- Killing the tmux pane
-- All PRs being resolved (auto-stop)
+モニターの停止方法:
+- tmuxペインを終了する
+- 全PRが解決される（自動停止）
 
-## Configuration
+## 設定
 
-| Parameter | Default | Description |
+| パラメータ | デフォルト | 説明 |
 |---|---|---|
-| interval | 30 | Polling interval in seconds |
+| interval | 30 | ポーリング間隔（秒） |
 
-## Integration
+## 連携
 
-**Called by:**
-- vf-execute — suggested after all issues complete
-- vf-flow — as the fifth step
+**呼び出し元:**
+- vf-execute — 全Issue完了後に提案される
+- vf-flow — 5番目のステップとして
 
-**Calls:**
-- GitHub MCP Server — PR comment polling
-- tmux — pane management for responder agents
-- git worktree — workspace for responder agents
+**呼び出し先:**
+- GitHub MCP Server — PRコメントのポーリング
+- tmux — レスポンダーAgentのペイン管理
+- git worktree — レスポンダーAgentの作業領域

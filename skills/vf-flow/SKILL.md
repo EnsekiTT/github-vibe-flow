@@ -5,7 +5,7 @@ description: "Use to run the full vibe-flow cycle end-to-end: design → issue c
 
 # Vibe Flow (End-to-End)
 
-## Overview
+## 概要
 
 vibe-flow サイクル全体を設計からクリーンアップまで統括する。
 
@@ -78,9 +78,9 @@ git rev-parse --show-toplevel
 
 短縮フローの流れ: `vf-plan → vf-execute → vf-monitor → vf-merge`
 
-## Integration
+## 連携
 
-**Reads (in order):**
+**読み込み順序:**
 1. skills/vf-design/SKILL.md
 2. skills/vf-issue-create/SKILL.md
 3. skills/vf-execute/SKILL.md

@@ -1,26 +1,26 @@
-# Issue Agent Prompt Template
+# Issue Agent プロンプトテンプレート
 
-Use this template when launching a Claude Code instance in a tmux pane to work on an issue.
+このテンプレートは、tmuxペインでIssueに取り組むClaude Codeインスタンスを起動する際に使用する。
 
-Substitute placeholders (ISSUE_NUMBER, ISSUE_TITLE, ISSUE_BODY, ACCEPTANCE_CRITERIA, WORKTREE_PATH, BRANCH_NAME) with actual values.
+プレースホルダー（ISSUE_NUMBER, ISSUE_TITLE, ISSUE_BODY, ACCEPTANCE_CRITERIA, WORKTREE_PATH, BRANCH_NAME）を実際の値に置換すること。
 
 ```
 claude --print --dangerously-skip-permissions -p "
 You are working on GitHub Issue ISSUE_NUMBER: ISSUE_TITLE
 
-## Issue Description
+## Issue の説明
 
 ISSUE_BODY
 
-## Acceptance Criteria
+## 受入基準
 
 ACCEPTANCE_CRITERIA
 
-## Your Working Directory
+## 作業ディレクトリ
 
 WORKTREE_PATH
 
-## Your Job
+## タスク
 
 1. Implement exactly what the issue specifies
 2. Write tests
@@ -30,9 +30,9 @@ WORKTREE_PATH
 6. Self-review and improve (see below)
 7. When done, exit
 
-## After Creating the PR
+## PR作成後
 
-### Self-Review & Improvement Loop
+### セルフレビュー・改善ループ
 
 1. Review your own PR diff:
    - Run: gh pr diff BRANCH_NAME
@@ -55,15 +55,16 @@ WORKTREE_PATH
    - If NOT ready: go back to step 1
    - If ready: add a final comment stating the PR is ready for review
 
-## Labels
+## ラベル
 
 Add the 'vibe-flow' label to the PR:
 - Run: gh pr edit BRANCH_NAME --add-label vibe-flow
 
-## Important
+## 注意事項
 
 - Stay focused on this single issue
 - Do not modify files unrelated to this issue
 - If you encounter blockers, document them in a PR comment and exit
+- コミュニケーション・コミットメッセージ・コード内コメントは日本語で記述すること
 "
 ```

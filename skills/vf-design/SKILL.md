@@ -5,7 +5,7 @@ description: "Use to start a new feature design. Explores ideas through collabor
 
 # Vibe Flow Design
 
-## Overview
+## 概要
 
 アイデアを対話的に探求し、GitHub Issueとして実行可能な設計ドキュメントに仕上げる。
 
@@ -50,7 +50,7 @@ description: "Use to start a new feature design. Explores ideas through collabor
 フォーマット:
 
 ```
-## Issue Breakdown
+## Issue 分解
 
 ### Issue 1: [タイトル]
 **説明:** [実装内容]
@@ -70,7 +70,7 @@ description: "Use to start a new feature design. Explores ideas through collabor
 - 番号は仮ID（`/vf-issue-create` で GitHub Issue 番号に置換される）
 
 ```
-## Execution Order
+## 実行順序
 
 `[1, (2, 3), 4]`
 ```
@@ -84,7 +84,7 @@ description: "Use to start a new feature design. Explores ideas through collabor
 - `/vf-flow` から呼び出された場合: 設計ドキュメントのパスを返し、次のステップに進む
 - 単体で呼び出された場合: 保存パスを報告し、`/vf-issue-create <パス>` の実行を提案する
 
-## Integration
+## 連携
 
-**Called by:**
+**呼び出し元:**
 - vf-flow — E2Eフローの最初のステップとして

@@ -5,7 +5,7 @@ description: "Use to select and prioritize existing GitHub Issues for execution.
 
 # Vibe Flow Plan
 
-## Overview
+## 概要
 
 リポジトリの既存GitHub Issueから対話的に実行対象を選定し、実行順序を決めて vf-execute に繋げる。vf-design を経由しない「既存Issue活用」の独立したエントリーポイント。
 
@@ -75,14 +75,14 @@ GitHub MCP Serverを使ってIssueを取得し、一覧表示する：
 - Issueが0件の場合: フィルタ条件の変更を提案する
 - 依存関係の推定に自信がない場合: 不確実であることを明示し、人間に確認する
 
-## Integration
+## 連携
 
 **独立したエントリーポイントとして機能する。**
 
 短縮フロー: `vf-plan → vf-execute → vf-monitor → vf-merge`
 
-**Calls:**
+**呼び出し先:**
 - GitHub MCP Server — Issue取得・詳細読み込み
 
-**Hands off to:**
+**ハンドオフ先:**
 - vf-execute — 実行記法を渡して実行を開始

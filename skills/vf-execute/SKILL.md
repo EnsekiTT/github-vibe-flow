@@ -5,108 +5,108 @@ description: "Use to execute GitHub Issues with tmux + git worktree. Parses exec
 
 # Vibe Flow Execute
 
-## Overview
+## 概要
 
-Execute GitHub Issues using tmux panes and git worktrees. Parse execution notation to determine serial/parallel execution order.
+tmuxペインとgit worktreeを使ってGitHub Issueを実行する。実行記法を解析し、シリアル/パラレルの実行順序を決定する。
 
-**Announce at start:** "I'm using the vf-execute skill to execute issues."
+**開始時の宣言:** 「vf-execute スキルを使って、Issueを実行します。」
 
-## The Process
+## プロセス
 
-### 1. Parse Input
+### 1. 入力の解析
 
-Accept execution notation as argument or read from design document:
-- Argument: `[#12, (#13, #14), #15]`
-- Design doc path: extract notation from the document
+引数として実行記法を受け取るか、設計ドキュメントから読み取る:
+- 引数: `[#12, (#13, #14), #15]`
+- 設計ドキュメントパス: ドキュメントから記法を抽出
 
-**Parsing rules:**
-- `[...]` = serial group (execute items left to right, wait for each)
-- `(...)` = parallel group (execute all items concurrently, wait for all)
-- `#N` = GitHub Issue number
-- Nesting is supported: `[#1, (#2, [#3, #4]), #5]`
+**解析ルール:**
+- `[...]` = シリアルグループ（左から右へ順次実行、各完了を待つ）
+- `(...)` = パラレルグループ（全アイテムを同時実行、全完了を待つ）
+- `#N` = GitHub Issue番号
+- ネストに対応: `[#1, (#2, [#3, #4]), #5]`
 
-### 2. Check tmux Environment
+### 2. tmux環境の確認
 
 ```bash
-# Check if inside tmux
+# tmux内かどうかを確認
 if [ -n "$TMUX" ]; then
-    echo "Inside tmux session"
+    echo "tmuxセッション内です"
 else
-    echo "Not in tmux - creating new session"
+    echo "tmux外です — 新しいセッションを作成します"
     tmux new-session -d -s vibe-flow
-    # NOTE: Inform user they need to attach: tmux attach -t vibe-flow
+    # 注意: ユーザーにアタッチを案内する: tmux attach -t vibe-flow
 fi
 ```
 
-### 3. Fetch Issue Details
+### 3. Issue詳細の取得
 
-For each issue number in the notation, fetch details via GitHub MCP:
-- Title
-- Body (description + acceptance criteria)
+記法内の各Issue番号について、GitHub MCP経由で詳細を取得する:
+- タイトル
+- 本文（説明 + 受入基準）
 
-### 4. Execute According to DAG
+### 4. DAGに従って実行
 
-Process the execution notation as a DAG:
+実行記法をDAGとして処理する:
 
-**For each serial step:**
-1. If single issue: execute it (see "Launch Agent" below)
-2. If parallel group: launch all issues concurrently
+**シリアルステップごとに:**
+1. 単一Issueの場合: そのIssueを実行（下記「Agentの起動」参照）
+2. パラレルグループの場合: 全Issueを同時に起動
 
-**For each parallel group:**
-1. Launch all issues simultaneously
-2. Wait for all to complete before proceeding
+**パラレルグループごとに:**
+1. 全Issueを同時に起動
+2. 全完了を待ってから次に進む
 
-### 5. Launch Agent (per issue)
+### 5. Agentの起動（Issue単位）
 
-For each issue, build the agent prompt from `./agent-prompt.md` template with issue details substituted:
+各Issueについて、`./agent-prompt.md` テンプレートにIssue詳細を埋め込んでAgentプロンプトを構築する:
 
 ```bash
-# Get repo root and issue slug
+# リポジトリルートとIssueスラグを取得
 REPO_ROOT=$(git rev-parse --show-toplevel)
 ISSUE_NUM=12
-ISSUE_TITLE_SLUG="add-auth-endpoint"  # slugified issue title
+ISSUE_TITLE_SLUG="add-auth-endpoint"  # タイトルをスラグ化
 BRANCH_NAME="vf/${ISSUE_NUM}-${ISSUE_TITLE_SLUG}"
 
-# Create worktree
+# worktreeを作成
 git worktree add "${REPO_ROOT}/.worktrees/${BRANCH_NAME}" -b "${BRANCH_NAME}"
 
-# Launch Claude Code in a new tmux pane
+# 新しいtmuxペインでClaude Codeを起動
 tmux split-window -t vibe-flow -h
 tmux send-keys -t vibe-flow "cd ${REPO_ROOT}/.worktrees/${BRANCH_NAME} && claude --print --dangerously-skip-permissions -p 'AGENT_PROMPT_HERE'" Enter
 
-# Rename pane for identification
+# 識別用にペインの名前を設定
 tmux select-pane -T "vf-${ISSUE_NUM}"
 ```
 
-### 6. Monitor Progress
+### 6. 進捗の監視
 
-Track each agent's status by checking tmux pane activity:
+tmuxペインのアクティビティを確認して各Agentの状態を追跡する:
 
 ```bash
-# Check if a pane's process is still running
+# ペインのプロセスが実行中かどうかを確認
 tmux list-panes -t vibe-flow -F '#{pane_title} #{pane_pid} #{pane_current_command}'
 ```
 
-When a serial step completes (or all items in a parallel group complete), proceed to the next step.
+シリアルステップの完了（またはパラレルグループの全アイテム完了）後、次のステップに進む。
 
-### 7. Completion
+### 7. 完了
 
-When all issues are processed:
-- Report summary of created PRs
-- Suggest starting `/vf-monitor` to watch for human review comments
+全Issueの処理が終わったら:
+- 作成されたPRのサマリを報告
+- `/vf-monitor` の開始を提案し、人間のレビューコメントを監視する
 
-## Error Handling
+## エラーハンドリング
 
-- If worktree creation fails (branch exists): warn and skip or ask
-- If tmux pane creation fails: report error
-- If an agent exits with errors: report and ask whether to retry or skip
+- worktree作成の失敗（ブランチが既に存在）: 警告を表示し、スキップするか確認する
+- tmuxペイン作成の失敗: エラーを報告する
+- Agentがエラーで終了: 報告し、リトライするかスキップするか確認する
 
-## Integration
+## 連携
 
-**Called by:**
-- vf-flow — as the third step
+**呼び出し元:**
+- vf-flow — 3番目のステップとして
 
-**Calls:**
-- GitHub MCP Server — fetch issue details
-- tmux — pane management
-- git worktree — workspace isolation
+**呼び出し先:**
+- GitHub MCP Server — Issue詳細の取得
+- tmux — ペイン管理
+- git worktree — 作業領域の隔離
